@@ -6,6 +6,10 @@ import base64
 import re
 import os.path
 
+
+__version__ = '1.0.1'
+
+
 def decode_image(file):
     """
     read image file by binary and decode to base64
@@ -44,7 +48,8 @@ def convert_html_img_to_base64(html_file_name, encoding=None):
     if encoding == None:
         encoding = 'utf-8'
 
-    if filename.split('.')[-1] != 'html':
+    root, ext = os.path.splitext(filename)
+    if ext != '.html':
         print('input html file.(ext must be .html)')
         sys.exit(1)
 
@@ -66,7 +71,13 @@ def convert_html_img_to_base64(html_file_name, encoding=None):
                     # print(image_path)
                     b64 = decode_image(image_path)
                     # print(b64)
-                    enc = "data:image/png;base64,{0}".format(b64)
+                    # print(img['src'])
+                    root, ext = os.path.splitext(img['src'])
+                    if ext.lower() == '.png': 
+                        enc = "data:image/png;base64,{0}".format(b64)
+                    elif ext.lower() == '.jpg' or ext.lower() == '.jpeg':
+                        enc = "data:image/jpeg;base64,{0}".format(b64)
+
                     img['src'] = enc
                     html = html.replace(match.group(), str(img))
                     # print('replace = {0} to {1}'.format(match.group(), str(img)))
